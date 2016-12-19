@@ -1,5 +1,5 @@
 #
-#  Copyright (c) 2016-2017, The OpenThread Authors.
+#  Copyright (c) 2018, The OpenThread Authors.
 #  All rights reserved.
 #
 #  Redistribution and use in source and binary forms, with or without
@@ -31,8 +31,7 @@ include $(abs_top_nlbuild_autotools_dir)/automake/pre.am
 # Always package (e.g. for 'make dist') these subdirectories.
 
 DIST_SUBDIRS                            = \
-    thread-cert                           \
-    ble                                   \
+    hci                                   \
     $(NULL)
 
 # Always build (e.g. for 'make all') these subdirectories.
@@ -40,30 +39,14 @@ DIST_SUBDIRS                            = \
 SUBDIRS                                 = \
     $(NULL)
 
-if OPENTHREAD_POSIX
-
-if OPENTHREAD_ENABLE_BLE
-
-SUBDIRS                                += \
-    ble                                   \
-    $(NULL)
-else
-
-if OPENTHREAD_ENABLE_CLI
-
-SUBDIRS                                += \
-    thread-cert                           \
-    $(NULL)
-endif # OPENTHREAD_ENABLE_CLI
-
-endif # OPENTHREAD_ENABLE_BLE
-
-endif # OPENTHREAD_POSIX
+if OPENTHREAD_BLE_HOST_NIMBLE
+SUBDIRS                                += hci
+endif
 
 # Always pretty (e.g. for 'make pretty') these subdirectories.
 
 PRETTY_SUBDIRS                          = \
+    hci                                   \
     $(NULL)
 
 include $(abs_top_nlbuild_autotools_dir)/automake/post.am
-

@@ -28,46 +28,21 @@
 
 /**
  * @file
- *   This file includes the platform-specific configuration.
- *
+ *   This defines the eventing mechanism between NimBLE host task
+ *   and the main openthread task.
  */
 
-/**
- * @def OPENTHREAD_POSIX_UART_BAUDRATE
- *
- * This setting configures the baudrate of the UART.
- *
- */
-#ifndef OPENTHREAD_POSIX_UART_BAUDRATE
-#define OPENTHREAD_POSIX_UART_BAUDRATE B115200
-#endif
+#ifndef BLE_NIMBLE_EVENT_H_
+#define BLE_NIMBLE_EVENT_H_
 
-/**
- * @def OT_BLE_MAX_NUM_SERVICES
- *
- * This setting configures the maximum number of Bluetooth GATT services.
- *
- */
-#ifndef OT_BLE_MAX_NUM_SERVICES
-#define OT_BLE_MAX_NUM_SERVICES 2
-#endif
+#include <openthread/error.h>
+#include <openthread/instance.h>
+#include <openthread/platform/ble.h>
 
-/**
- * @def OT_BLE_MAX_NUM_CHARACTERISTICS
- *
- * This setting configures the maximum number of Bluetooth GATT characteristics.
- *
- */
-#ifndef OT_BLE_MAX_NUM_CHARACTERISTICS
-#define OT_BLE_MAX_NUM_CHARACTERISTICS 5
-#endif
+#define DISPATCH_OT_BLE(otPlatBleFunction) \
+      otPlatBleFunction;                   \
+      platformBleSignal();
 
-/**
- * @def OT_BLE_MAX_NUM_UUIDS
- *
- * This setting configures the maximum number of Bluetooth GATT UUIDs.
- *
- */
-#ifndef OT_BLE_MAX_NUM_UUIDS
-#define OT_BLE_MAX_NUM_UUIDS (OT_BLE_MAX_NUM_SERVICES + OT_BLE_MAX_NUM_CHARACTERISTICS)
-#endif
+void platformBleSignal();
+
+#endif // BLE_NIMBLE_EVENT_H_
