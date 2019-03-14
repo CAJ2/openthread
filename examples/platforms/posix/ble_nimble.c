@@ -992,9 +992,8 @@ static int on_l2cap_event(struct ble_l2cap_event *aEvent, void *aArg)
 
     case BLE_L2CAP_EVENT_COC_ACCEPT:
     {
-        otPlatBleL2capConnetionResult result;
-        (void)result;
-        DISPATCH_OT_BLE(otPlatBleL2capOnConnectionResponse(instance, result, aEvent->accept.chan->peer_mtu,
+        otPlatBleL2capError error = OT_BLE_L2C_ERROR_NONE;
+        DISPATCH_OT_BLE(otPlatBleL2capOnConnectionResponse(instance, error, aEvent->accept.chan->peer_mtu,
                                                            aEvent->accept.chan->dcid));
         break;
     }
@@ -1044,13 +1043,13 @@ otError otPlatBleL2capDisconnect(otInstance *aInstance, uint16_t aLocalCid, uint
     return mapNimbleToOtError(rc);
 }
 
-otError otPlatBleL2capConnectionResponse(otInstance *                  aInstance,
-                                         otPlatBleL2capConnetionResult aResult,
-                                         uint16_t                      aMtu,
-                                         uint16_t *                    aCid)
+otError otPlatBleL2capConnectionResponse(otInstance *        aInstance,
+                                         otPlatBleL2capError aError,
+                                         uint16_t            aMtu,
+                                         uint16_t *          aCid)
 {
     (void)aInstance;
-    (void)aResult;
+    (void)aError;
     (void)aMtu;
     (void)aCid;
 

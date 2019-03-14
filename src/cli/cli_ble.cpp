@@ -575,13 +575,13 @@ void otPlatBleL2capOnConnectionRequest(otInstance *aInstance, uint16_t aPsm, uin
     ot::Cli::Server::sServer->OutputFormat("L2CAP connect request: @psm=%d mtu=%d dcid=%d", aPsm, aMtu, aPeerCid);
 }
 
-void otPlatBleL2capOnConnectionResponse(otInstance *                  aInstance,
-                                        otPlatBleL2capConnetionResult aResult,
-                                        uint16_t                      aMtu,
-                                        uint16_t                      aPeerCid)
+void otPlatBleL2capOnConnectionResponse(otInstance *        aInstance,
+                                        otPlatBleL2capError aError,
+                                        uint16_t            aMtu,
+                                        uint16_t            aPeerCid)
 {
     (void)aInstance;
-    (void)aResult;
+    (void)aError;
 
     ot::Cli::Server::sServer->OutputFormat("L2CAP connect response: @mtu=%d dcid=%d", aMtu, aPeerCid);
 }

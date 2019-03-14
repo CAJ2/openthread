@@ -244,13 +244,13 @@ void otPlatBleL2capOnConnectionRequest(otInstance *aInstance, uint16_t aPsm, uin
 }
 
 OT_TOOL_WEAK
-void otPlatBleL2capOnConnectionResponse(otInstance *                  aInstance,
-                                        otPlatBleL2capConnetionResult aResult,
-                                        uint16_t                      aMtu,
-                                        uint16_t                      aPeerCid)
+void otPlatBleL2capOnConnectionResponse(otInstance *        aInstance,
+                                        otPlatBleL2capError aError,
+                                        uint16_t            aMtu,
+                                        uint16_t            aPeerCid)
 {
     (void)aInstance;
-    (void)aResult;
+    (void)aError;
     (void)aMtu;
     (void)aPeerCid;
 
