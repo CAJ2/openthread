@@ -52,14 +52,13 @@ class Interpreter;
 class Ble
 {
 public:
-
     /**
      * Constructor for ot::Cli::Ble command processor.
      * @param[in]  aInterpreter  The CLI interpreter.
      *
      */
     Ble(Interpreter &aInterpreter);
-  
+
     /**
      * This method interprets a list of CLI arguments.
      *
@@ -74,7 +73,7 @@ private:
     struct Command
     {
         const char *mName;
-        otError(Ble::*mCommand)(int argc, char *argv[]);
+        otError (Ble::*mCommand)(int argc, char *argv[]);
     };
 
     otError ProcessHelp(int argc, char *argv[]);
@@ -88,17 +87,17 @@ private:
 
     otError ProcessMtu(int argc, char *argv[]);
     otError ProcessBdAddr(int argc, char *argv[]);
-  
+
     otError ProcessGatt(int argc, char *argv[]);
 
     otError ProcessChannel(int argc, char *argv[]);
 
-    Interpreter          &mInterpreter;
+    Interpreter &mInterpreter;
 
     static const Command sCommands[];
 };
 
-}  // namespace Cli
-}  // namespace ot
+} // namespace Cli
+} // namespace ot
 
-#endif  // CLI_BLE_HPP_
+#endif // CLI_BLE_HPP_
