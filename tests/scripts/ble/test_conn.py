@@ -63,8 +63,8 @@ class test_conn(unittest.TestCase):
         self.nodes[PERIPHERAL].pexpect.expect("connected: @id=")
 
         self.nodes[CENTRAL].ble_conn_stop()
-        self.nodes[CENTRAL].pexpect.expect("disconnected: @id=")
         self.nodes[PERIPHERAL].pexpect.expect("disconnected: @id=")
+        self.nodes[CENTRAL].pexpect.expect("disconnected: @id=")
 
         # Connect second time for robust testing
 
@@ -73,8 +73,8 @@ class test_conn(unittest.TestCase):
         self.nodes[CENTRAL].ble_scan_stop()
         self.nodes[CENTRAL].ble_conn_start(dst_addr, 1)
 
-        self.nodes[CENTRAL].pexpect.expect("connected: @id=")
         self.nodes[PERIPHERAL].pexpect.expect("connected: @id=")
+        self.nodes[CENTRAL].pexpect.expect("connected: @id=")
 
 
 if __name__ == '__main__':
