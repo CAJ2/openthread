@@ -16,3 +16,11 @@ root      64552  0.0  0.0   4464   676 pts/12   S    22:25   0:00 ../../../third
 
 $ sudo killall btvirt
 ```
+
+Minimal build configuration is:
+
+```
+bootstrap
+configure --enable-ble --with-examples=posix --with-ble-host=nimble --enable-cli  --enable-ftd --enable-mtd
+make
+```
