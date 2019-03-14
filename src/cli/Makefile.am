@@ -168,6 +168,7 @@ libopenthread_cli_mtd_a_SOURCES =     \
 
 noinst_HEADERS                      = \
     cli.hpp                           \
+    cli_ble.hpp                       \
     cli_coap.hpp                      \
     cli_coap_secure.hpp               \
     cli_console.hpp                   \

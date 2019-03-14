@@ -216,7 +216,7 @@ private:
 #if OPENTHREAD_ENABLE_BLE
     void ProcessBle(int argc, char *argv[]);
 #endif
-    void    ProcessChannel(int argc, char *argv[]);
+    void ProcessChannel(int argc, char *argv[]);
 #if OPENTHREAD_FTD
     void ProcessChild(int argc, char *argv[]);
     void ProcessChildMax(int argc, char *argv[]);
