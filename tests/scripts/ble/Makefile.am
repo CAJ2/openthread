@@ -1,5 +1,5 @@
 #
-#  Copyright (c) 2016-2017, The OpenThread Authors.
+#  Copyright (c) 2018, The OpenThread Authors.
 #  All rights reserved.
 #
 #  Redistribution and use in source and binary forms, with or without
@@ -28,42 +28,47 @@
 
 include $(abs_top_nlbuild_autotools_dir)/automake/pre.am
 
-# Always package (e.g. for 'make dist') these subdirectories.
+LOG_DRIVER=$(abs_top_srcdir)/third_party/openthread-test-driver/test-driver
 
-DIST_SUBDIRS                            = \
-    thread-cert                           \
-    ble                                   \
+EXTRA_DIST                                                         = \
+    test_beacon.py                                                   \
+    test_conn.py                                                     \
+    test_gatt_read.py                                                \
+    test_gatt_discover.py                                            \
+    test_l2cap.py                                                    \
+    node_cli.py                                                      \
     $(NULL)
 
-# Always build (e.g. for 'make all') these subdirectories.
+if OPENTHREAD_BUILD_TESTS
 
-SUBDIRS                                 = \
-    $(NULL)
+# First, list all essential program and script tests that MUST be run.
 
-if OPENTHREAD_POSIX
+check_PROGRAMS =
+
+check_SCRIPTS =
 
 if OPENTHREAD_ENABLE_BLE
-
-SUBDIRS                                += \
-    ble                                   \
+check_SCRIPTS                                                     += \
+    test_beacon.py                                                   \
+    test_l2cap.py                                                    \
     $(NULL)
-else
-
-if OPENTHREAD_ENABLE_CLI
-
-SUBDIRS                                += \
-    thread-cert                           \
-    $(NULL)
-endif # OPENTHREAD_ENABLE_CLI
-
 endif # OPENTHREAD_ENABLE_BLE
 
-endif # OPENTHREAD_POSIX
-
-# Always pretty (e.g. for 'make pretty') these subdirectories.
-
-PRETTY_SUBDIRS                          = \
+TESTS_ENVIRONMENT                                                  = \
+    export                                                           \
+    top_builddir='$(top_builddir)'                                   \
+    VERBOSE=1;                                                       \
     $(NULL)
 
-include $(abs_top_nlbuild_autotools_dir)/automake/post.am
+TESTS                                                              = \
+    $(check_PROGRAMS)                                                \
+    $(check_SCRIPTS)                                                 \
+    $(NULL)
 
+XFAIL_TESTS                                                        = \
+    $(NULL)
+
+
+endif # OPENTHREAD_BUILD_TESTS
+
+include $(abs_top_nlbuild_autotools_dir)/automake/post.am

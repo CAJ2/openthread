@@ -108,6 +108,9 @@ namespace Cli {
 const struct Command Interpreter::sCommands[] = {
     {"help", &Interpreter::ProcessHelp},
     {"autostart", &Interpreter::ProcessAutoStart},
+#if OPENTHREAD_ENABLE_BLE
+    {"ble", &Interpreter::ProcessBle},
+#endif
     {"bufferinfo", &Interpreter::ProcessBufferInfo},
     {"channel", &Interpreter::ProcessChannel},
 #if OPENTHREAD_FTD
@@ -309,6 +312,9 @@ Interpreter::Interpreter(Instance *aInstance)
 #if OPENTHREAD_ENABLE_APPLICATION_COAP_SECURE
     , mCoapSecure(*this)
 #endif
+#if OPENTHREAD_ENABLE_BLE
+    , mBle(*this)
+#endif
     , mInstance(aInstance)
 {
 #ifdef OTDLL
@@ -404,7 +410,7 @@ void Interpreter::OutputBytes(const uint8_t *aBytes, uint8_t aLength) const
     }
 }
 
-otError Interpreter::ParseLong(char *argv, long &value)
+otError Interpreter::ParseLong(const char *argv, long &value)
 {
     char *endptr;
     value = strtol(argv, &endptr, 0);
@@ -3128,6 +3134,37 @@ void Interpreter::ProcessUdp(int argc, char *argv[])
     AppendResult(error);
 }
 #endif
+
+#if OPENTHREAD_ENABLE_BLE
+otError Interpreter::ParseBda(const char *aAddr, const char *aType, otPlatBleDeviceAddr *aDestAddr)
+{
+    otError error = OT_ERROR_NONE;
+    long    type;
+
+    VerifyOrExit(Interpreter::Hex2Bin(aAddr, aDestAddr->mAddr, sizeof(aDestAddr->mAddr)) == sizeof(aDestAddr->mAddr),
+                 error = OT_ERROR_PARSE);
+
+    if (aType)
+    {
+        SuccessOrExit(error = Interpreter::ParseLong(aType, type));
+        aDestAddr->mAddrType = type;
+    }
+    else
+    {
+        aDestAddr->mAddrType = OT_BLE_ADDRESS_TYPE_PUBLIC;
+    }
+
+exit:
+    return error;
+}
+
+void Interpreter::ProcessBle(int argc, char *argv[])
+{
+    otError error;
+    error = mBle.Process(mInstance, argc, argv);
+    AppendResult(error);
+}
+#endif // OPENTHREAD_ENABLE_BLE
 
 void Interpreter::ProcessVersion(int argc, char *argv[])
 {

@@ -51,6 +51,11 @@
 #include <openthread/tasklet.h>
 #include <openthread/platform/alarm-milli.h>
 
+#if OPENTHREAD_ENABLE_BLE
+#include <openthread/platform/ble.h>
+#include <openthread/platform/ble_hci.h>
+#endif
+
 uint32_t gNodeId = 1;
 
 extern bool gPlatformPseudoResetWasRequested;
@@ -113,6 +118,9 @@ void otSysInit(int aArgCount, char *aArgVector[])
     platformAlarmInit(speedUpFactor);
     platformRadioInit();
     platformRandomInit();
+#if OPENTHREAD_ENABLE_BLE
+    platformBleInit();
+#endif
 }
 
 bool otSysPseudoResetWasRequested(void)
@@ -140,6 +148,9 @@ void otSysProcessDrivers(otInstance *aInstance)
 
     platformUartUpdateFdSet(&read_fds, &write_fds, &error_fds, &max_fd);
     platformRadioUpdateFdSet(&read_fds, &write_fds, &max_fd);
+#if OPENTHREAD_ENABLE_BLE
+    platformBleUpdateFdSet(&read_fds, &max_fd);
+#endif
     platformAlarmUpdateTimeout(&timeout);
 
     if (!otTaskletsArePending(aInstance))
@@ -161,6 +172,10 @@ void otSysProcessDrivers(otInstance *aInstance)
     platformUartProcess();
     platformRadioProcess(aInstance);
     platformAlarmProcess(aInstance);
+
+#if OPENTHREAD_ENABLE_BLE
+    platformBleProcess(aInstance);
+#endif
 }
 
 #endif // OPENTHREAD_POSIX_VIRTUAL_TIME == 0

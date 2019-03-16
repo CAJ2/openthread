@@ -1,5 +1,6 @@
+#!/usr/bin/env python
 #
-#  Copyright (c) 2016-2017, The OpenThread Authors.
+#  Copyright (c) 2018, The OpenThread Authors.
 #  All rights reserved.
 #
 #  Redistribution and use in source and binary forms, with or without
@@ -26,44 +27,49 @@
 #  POSSIBILITY OF SUCH DAMAGE.
 #
 
-include $(abs_top_nlbuild_autotools_dir)/automake/pre.am
+import os
+import sys
+import time
+import pexpect
+import unittest
+import subprocess
 
-# Always package (e.g. for 'make dist') these subdirectories.
+from node_cli import Node
 
-DIST_SUBDIRS                            = \
-    thread-cert                           \
-    ble                                   \
-    $(NULL)
+CENTRAL = 1
+PERIPHERAL = 2
+NODE_COUNT = 2
 
-# Always build (e.g. for 'make all') these subdirectories.
+DEVICE_NAME_HANDLE = 3
 
-SUBDIRS                                 = \
-    $(NULL)
+class test_gatt_read(unittest.TestCase):
+    def setUp(self):
+        self.nodes = Node.setUp(NODE_COUNT)
 
-if OPENTHREAD_POSIX
+    def tearDown(self):
+        del self.nodes
+        Node.tearDown()
 
-if OPENTHREAD_ENABLE_BLE
+    def test_gatt_read(self):
 
-SUBDIRS                                += \
-    ble                                   \
-    $(NULL)
-else
+        self.nodes[CENTRAL].ble_start()
+        self.nodes[CENTRAL].ble_scan_start()
 
-if OPENTHREAD_ENABLE_CLI
+        self.nodes[PERIPHERAL].ble_start()
+        self.nodes[PERIPHERAL].ble_adv_data("0201060302affe")
+        self.nodes[PERIPHERAL].ble_adv_start(500)
+        dst_addr = self.nodes[PERIPHERAL].ble_get_bdaddr()
 
-SUBDIRS                                += \
-    thread-cert                           \
-    $(NULL)
-endif # OPENTHREAD_ENABLE_CLI
+        self.nodes[CENTRAL].ble_scan_stop()
+        self.nodes[CENTRAL].ble_conn_start(dst_addr, 1)
 
-endif # OPENTHREAD_ENABLE_BLE
+        self.nodes[CENTRAL].pexpect.expect("connected: @id=")
+        self.nodes[PERIPHERAL].pexpect.expect("connected: @id=")
 
-endif # OPENTHREAD_POSIX
+        self.nodes[CENTRAL].ble_gatt_read(DEVICE_NAME_HANDLE)
+        self.nodes[CENTRAL].pexpect.expect("6e696d626c65")
+        self.nodes[CENTRAL].ble_gatt_write(DEVICE_NAME_HANDLE, "123456")
+        #self.nodes[PERIPHERAL].pexpect.expect("Got BLE_WRT_REQ: @handle=3 data=123456")
 
-# Always pretty (e.g. for 'make pretty') these subdirectories.
-
-PRETTY_SUBDIRS                          = \
-    $(NULL)
-
-include $(abs_top_nlbuild_autotools_dir)/automake/post.am
-
+if __name__ == '__main__':
+    unittest.main()

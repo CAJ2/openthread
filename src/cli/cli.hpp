@@ -45,6 +45,11 @@
 #include "cli/cli_dataset.hpp"
 #include "cli/cli_udp.hpp"
 
+#if OPENTHREAD_ENABLE_BLE
+#include <openthread/platform/ble.h>
+#include "cli/cli_ble.hpp"
+#endif
+
 #if OPENTHREAD_ENABLE_APPLICATION_COAP
 #include <coap/coap_message.hpp>
 #include "cli/cli_coap.hpp"
@@ -99,6 +104,7 @@ struct Command
  */
 class Interpreter
 {
+    friend class Ble;
     friend class Coap;
     friend class CoapSecure;
     friend class Dataset;
@@ -132,7 +138,7 @@ public:
      * @retval OT_ERROR_PARSE  Could not parse the ASCII string.
      *
      */
-    static otError ParseLong(char *aString, long &aLong);
+    static otError ParseLong(const char *aString, long &aLong);
 
     /**
      * This method parses an ASCII string as an unsigned long.
@@ -180,6 +186,21 @@ public:
      */
     void SetUserCommands(const otCliCommand *aCommands, uint8_t aLength);
 
+#if OPENTHREAD_ENABLE_BLE
+    /**
+     * This method parses ASCII string representing a Bluetooth Device Aaddress into
+     * a variable of otPlatBleDeviceAddr.
+     *
+     * @param[in]  aAddr      A pointer to the BDA string.
+     * @param[in]  aType      A pointer to a string which contains BDA type.
+     * @param[out] aDestAddr  Maximum length of the binary representation.
+     *
+     * @retval OT_ERROR_NONE   Successfully parsed the ASCII string.
+     * @retval OT_ERROR_PARSE  Could not parse the ASCII string.
+     */
+    static otError ParseBda(const char *aAddr, const char *aType, otPlatBleDeviceAddr *aDestAddr);
+#endif
+
 private:
     enum
     {
@@ -192,7 +213,10 @@ private:
     void    ProcessHelp(int argc, char *argv[]);
     void    ProcessAutoStart(int argc, char *argv[]);
     void    ProcessBufferInfo(int argc, char *argv[]);
-    void    ProcessChannel(int argc, char *argv[]);
+#if OPENTHREAD_ENABLE_BLE
+    void ProcessBle(int argc, char *argv[]);
+#endif
+    void ProcessChannel(int argc, char *argv[]);
 #if OPENTHREAD_FTD
     void ProcessChild(int argc, char *argv[]);
     void ProcessChildMax(int argc, char *argv[]);
@@ -454,6 +478,12 @@ private:
     CoapSecure mCoapSecure;
 
 #endif // OPENTHREAD_ENABLE_APPLICATION_COAP_SECURE
+#if OPENTHREAD_ENABLE_BLE
+
+    Ble mBle;
+
+#endif // OPENTHREAD_ENABLE_BLE
+
     Instance *mInstance;
 };
 

@@ -1,5 +1,6 @@
+#!/usr/bin/env python
 #
-#  Copyright (c) 2016-2017, The OpenThread Authors.
+#  Copyright (c) 2018, The OpenThread Authors.
 #  All rights reserved.
 #
 #  Redistribution and use in source and binary forms, with or without
@@ -26,44 +27,39 @@
 #  POSSIBILITY OF SUCH DAMAGE.
 #
 
-include $(abs_top_nlbuild_autotools_dir)/automake/pre.am
+import os
+import sys
+import time
+import pexpect
+import unittest
+import subprocess
 
-# Always package (e.g. for 'make dist') these subdirectories.
+from node_cli import Node
 
-DIST_SUBDIRS                            = \
-    thread-cert                           \
-    ble                                   \
-    $(NULL)
+SCANNER = 1
+BEACONER = 2
+NODE_COUNT = 2
 
-# Always build (e.g. for 'make all') these subdirectories.
+class test_beacon(unittest.TestCase):
+    def setUp(self):
+        self.nodes = Node.setUp(NODE_COUNT)
 
-SUBDIRS                                 = \
-    $(NULL)
+    def tearDown(self):
+        del self.nodes
+        Node.tearDown()
 
-if OPENTHREAD_POSIX
+    def test_beacon(self):
+        self.nodes[SCANNER].ble_start()
+        self.nodes[SCANNER].ble_scan_start()
 
-if OPENTHREAD_ENABLE_BLE
+        self.nodes[BEACONER].ble_start()
+        addr = self.nodes[BEACONER].ble_get_bdaddr()
+        self.nodes[BEACONER].ble_adv_data("0201060302affe")
+        self.nodes[BEACONER].ble_adv_start(500)
 
-SUBDIRS                                += \
-    ble                                   \
-    $(NULL)
-else
+        print "Expect: Got BLE_ADV from %s \[1\] - 0201060302affe" % (addr)
+        rsp = "Got BLE_ADV from %s \[1\] - 0201060302affe" % (addr)
+        self.nodes[SCANNER].pexpect.expect(rsp)
 
-if OPENTHREAD_ENABLE_CLI
-
-SUBDIRS                                += \
-    thread-cert                           \
-    $(NULL)
-endif # OPENTHREAD_ENABLE_CLI
-
-endif # OPENTHREAD_ENABLE_BLE
-
-endif # OPENTHREAD_POSIX
-
-# Always pretty (e.g. for 'make pretty') these subdirectories.
-
-PRETTY_SUBDIRS                          = \
-    $(NULL)
-
-include $(abs_top_nlbuild_autotools_dir)/automake/post.am
-
+if __name__ == '__main__':
+    unittest.main()

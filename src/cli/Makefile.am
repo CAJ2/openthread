@@ -152,6 +152,12 @@ SOURCES_COMMON =                      \
     cli_udp.cpp                       \
     $(NULL)
 
+if OPENTHREAD_ENABLE_BLE
+SOURCES_COMMON                     += \
+    cli_ble.cpp                       \
+    $(NULL)
+endif # OPENTHREAD_ENABLE_BLE
+
 libopenthread_cli_ftd_a_SOURCES =     \
     $(SOURCES_COMMON)                 \
     $(NULL)
@@ -162,6 +168,7 @@ libopenthread_cli_mtd_a_SOURCES =     \
 
 noinst_HEADERS                      = \
     cli.hpp                           \
+    cli_ble.hpp                       \
     cli_coap.hpp                      \
     cli_coap_secure.hpp               \
     cli_console.hpp                   \
